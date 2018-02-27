@@ -330,16 +330,14 @@ fty_mc_server (zsock_t *pipe, void *args)
             }
 
             // sometimes we do have nan in values, report if we get something like that on METRICS
-            double value = atof (fty_proto_value (bmsg));
+            double value = strtod (fty_proto_value (bmsg), NULL);
             if (isnan (value)) {
-                zsys_warning ("%s:\tisnan ('%s'), subject='%s', sender='%s'",
+                zsys_warning ("%s:\tisnan (%f), subject='%s', sender='%s'",
                         self->name,
                         value,
                         mlm_client_subject (self->client),
                         mlm_client_sender (self->client)
                         );
-                fty_proto_destroy (&bmsg);
-                continue;
             }
 
             for (uint32_t *step_p = cmsteps_first (self->steps);
